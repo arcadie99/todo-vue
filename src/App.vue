@@ -7,7 +7,6 @@ import Todo from './components/Todo.vue'
 <template>
   <header>
     <div class="wrapper">
-      TODO:
       <Todo />
     </div>
   </header>
