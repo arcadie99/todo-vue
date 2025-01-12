@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const value = ref('')
 const list = ref([])
+const hideCompleted = ref(false)
 
 let id = 0
 
+const filteredTodos = computed(() => {
+  return hideCompleted.value ? list.value.filter((t) => t.done) : list.value
+})
+
 function addElement() {
-  if (value.value.trim() === '') return // Prevent adding empty items
+  if (value.value.trim() === '') return
 
   let newItem = { id: id++, value: value.value, done: false }
   list.value.push(newItem)
@@ -23,7 +28,6 @@ function deleteElement(element) {
   <v-container class="my-4">
     <v-row justify="center">
       <v-col cols="12" md="8">
-        <!-- Add Todo Form -->
         <v-card class="mb-4">
           <v-card-title>
             <span class="text-h6">Add a Todo Item</span>
@@ -43,18 +47,17 @@ function deleteElement(element) {
           </v-card-text>
         </v-card>
 
-        <!-- Todo List -->
-        <v-card>
-          <v-card-title>
+        <v-card class="mt-4">
+          <v-card-title class="d-flex justify-space-between align-center">
             <span class="text-h6">Todo List</span>
+            <v-checkbox label="Show done" v-model="hideCompleted"></v-checkbox>
           </v-card-title>
           <v-card-text>
             <v-list>
-              <v-list-item v-for="element in list" :key="element.id">
-                {{ element.value }}
-
+              <v-list-item v-for="element in filteredTodos" :key="element.id">
+                <v-checkbox :label="element.value" v-model="element.done"></v-checkbox>
                 <template v-slot:append>
-                  <v-btn icon @click="deleteElement(element)" color="error">
+                  <v-btn icon @click="deleteElement(element)">
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
                 </template>
@@ -66,4 +69,3 @@ function deleteElement(element) {
     </v-row>
   </v-container>
 </template>
-
